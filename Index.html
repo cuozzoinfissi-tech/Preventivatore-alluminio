@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preventivo Infissi R40</title>
+<style>
+  :root{
+    --graphite:#22262b;
+    --steel:#3d5a73;
+    --steel-light:#5c8099;
+    --aluminium:#ced4d8;
+    --paper:#f5f4f0;
+    --panel:#ffffff;
+    --amber:#c8791f;
+    --line:#d7d9db;
+    --text:#22262b;
+    --text-soft:#5b6166;
+    --font-head:'Barlow Condensed', Arial, sans-serif;
+    --font-body:'IBM Plex Sans', Arial, sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-size:14px;
+    line-height:1.45;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+
+  header.top{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:3px solid var(--graphite);
+    padding-bottom:14px;margin-bottom:22px;flex-wrap:wrap;gap:10px;
+  }
+  header.top h1{
+    font-family:var(--font-head);font-weight:700;
+    font-size:34px;letter-spacing:.3px;margin:0;color:var(--graphite);
+  }
+  header.top .tag{
+    font-size:13px;color:var(--text-soft);margin-top:2px;
+  }
+  header.top .series{
+    font-family:var(--font-head);font-size:22px;font-weight:600;
+    color:var(--steel);border:2px solid var(--steel);
+    padding:4px 12px;border-radius:2px;
+  }
+
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+  @media (max-width:880px){.layout{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:3px;padding:18px 18px 20px;margin-bottom:18px;
+  }
+  .card h2{
+    font-family:var(--font-head);font-weight:600;font-size:19px;
+    margin:0 0 12px;color:var(--graphite);
+    border-left:4px solid var(--steel);padding-left:10px;
+  }
+  .card h2 small{
+    display:block;font-family:var(--font-body);font-weight:400;
+    font-size:11.5px;color:var(--text-soft);margin-top:2px;padding-top:2px;
+  }
+
+  .client-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;}
+  @media (max-width:520px){.client-grid{grid-template-columns:1fr;}}
+  .field label{display:block;font-size:11.5px;color:var(--text-soft);margin-bottom:3px;}
+  .field input{
+    width:100%;padding:7px 8px;border:1px solid var(--line);
+    border-radius:2px;font-family:var(--font-body);font-size:13.5px;background:#fcfcfb;
+  }
+  .field input:focus{outline:2px solid var(--steel-light);outline-offset:0;border-color:var(--steel);}
+
+  table.listino{width:100%;border-collapse:collapse;font-size:13px;}
+  table.listino th{
+    text-align:left;font-weight:600;color:var(--text-soft);
+    font-size:11px;padding:5px 6px;border-bottom:1px solid var(--line);
+  }
+  table.listino td{padding:5px 6px;border-bottom:1px solid #eceeef;}
+  table.listino input[type=number]{
+    width:90px;padding:5px 6px;border:1px solid var(--line);border-radius:2px;
+    font-size:13px;text-align:right;background:#fcfcfb;
+  }
+  .params-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin-top:12px;}
+  @media (max-width:520px){.params-grid{grid-template-columns:1fr;}}
+  .param-row{display:flex;justify-content:space-between;align-items:center;gap:8px;
+    border-bottom:1px dashed var(--line);padding:5px 0;}
+  .param-row label{font-size:12.5px;color:var(--text-soft);flex:1;}
+  .param-row input{width:78px;padding:5px 6px;border:1px solid var(--line);border-radius:2px;
+    text-align:right;font-size:13px;background:#fcfcfb;}
+
+  .rows-table-wrap{overflow-x:auto;}
+  table.rows{width:100%;border-collapse:collapse;min-width:900px;font-size:12.5px;}
+  table.rows thead th{
+    background:var(--graphite);color:#fff;font-weight:600;font-size:10.6px;
+    text-transform:none;padding:7px 5px;text-align:center;letter-spacing:.2px;
+  }
+  table.rows tbody td{
+    padding:4px;border-bottom:1px solid #eceeef;vertical-align:middle;
+  }
+  table.rows tbody tr:hover{background:#fafbfb;}
+  table.rows input, table.rows select{
+    width:100%;padding:5px 5px;border:1px solid var(--line);border-radius:2px;
+    font-size:12.5px;background:#fcfcfb;
+  }
+  table.rows input[type=number]{text-align:right;}
+  td.calc{color:var(--text-soft);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.money{font-weight:600;color:var(--graphite);text-align:right;white-space:nowrap;}
+  td.rownum{text-align:center;color:var(--text-soft);font-weight:600;width:26px;}
+  .rm-btn{
+    background:none;border:1px solid var(--line);color:#a33;
+    border-radius:2px;width:24px;height:24px;cursor:pointer;font-size:14px;line-height:1;
+  }
+  .rm-btn:hover{background:#fbeaea;border-color:#a33;}
+
+  .add-row-btn{
+    margin-top:10px;background:var(--steel);color:#fff;border:none;
+    padding:8px 16px;border-radius:2px;font-family:var(--font-body);font-weight:600;
+    font-size:13px;cursor:pointer;
+  }
+  .add-row-btn:hover{background:var(--steel-light);}
+
+  /* Sidebar summary */
+  .summary{position:sticky;top:20px;}
+  .summary .card{padding:20px 18px;}
+  .summary h2{border-left:4px solid var(--amber);}
+  .sum-line{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .sum-line.net{font-weight:600;}
+  .sum-line span:last-child{font-variant-numeric:tabular-nums;}
+  .sum-total{
+    margin-top:10px;background:var(--graphite);color:#fff;border-radius:3px;
+    padding:14px 14px;display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .sum-total .lbl{font-family:var(--font-head);font-size:15px;letter-spacing:.3px;}
+  .sum-total .val{font-family:var(--font-head);font-size:26px;font-weight:700;color:#ffb066;}
+  .n-items{font-size:11.5px;color:var(--text-soft);margin-top:8px;}
+
+  .actions{display:flex;gap:8px;margin-top:16px;}
+  .btn-outline{
+    flex:1;background:none;border:1.5px solid var(--graphite);color:var(--graphite);
+    padding:9px 10px;border-radius:2px;font-family:var(--font-body);font-weight:600;
+    font-size:12.5px;cursor:pointer;
+  }
+  .btn-outline:hover{background:var(--graphite);color:#fff;}
+
+  .foot-note{font-size:11px;color:var(--text-soft);margin-top:20px;line-height:1.5;}
+
+  @media print{
+    .add-row-btn, .actions, .rm-btn{display:none;}
+    body{background:#fff;}
+    .card{border:1px solid #999;}
+    .layout{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Preventivo Infissi</h1>
+      <div class="tag">Serramenti in alluminio a taglio termico</div>
+    </div>
+    <div class="series">SERIE R40</div>
+  </header>
+
+  <div class="layout">
+    <div class="main">
+
+      <div class="card">
+        <h2>Dati commessa</h2>
+        <div class="client-grid">
+          <div class="field"><label>Cliente</label><input type="text" id="f-cliente" placeholder="Nome e cognome / ragione sociale"></div>
+          <div class="field"><label>Cantiere / indirizzo</label><input type="text" id="f-cantiere" placeholder="Via, città"></div>
+          <div class="field"><label>N. preventivo</label><input type="text" id="f-numero" placeholder="es. 2026-014"></div>
+          <div class="field"><label>Data</label><input type="date" id="f-data"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Listino prezzi <small>Prezzo al m² per tipologia — modificalo secondo il tuo listino</small></h2>
+        <table class="listino">
+          <thead><tr><th>Tipologia infisso</th><th style="text-align:right">Prezzo €/m²</th></tr></thead>
+          <tbody id="listino-body"></tbody>
+        </table>
+
+        <div class="params-grid">
+          <div class="param-row"><label>Mq minimo fatturabile per infisso</label><input type="number" id="p-mqmin" step="0.05" value="1.50"></div>
+          <div class="param-row"><label>Sconto commerciale (%)</label><input type="number" id="p-sconto" step="1" value="0"></div>
+          <div class="param-row"><label>IVA (%)</label><input type="number" id="p-iva" step="1" value="22"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Righe preventivo <small>Una riga per ogni infisso o gruppo di infissi identici</small></h2>
+        <div class="rows-table-wrap">
+          <table class="rows">
+            <thead>
+              <tr>
+                <th></th><th>Descrizione</th><th>Tipologia</th><th>Largh.<br>mm</th><th>Alt.<br>mm</th>
+                <th>Q.tà</th><th>m²<br>cad.</th><th>€/m²</th>
+                <th>Colore<br>%</th><th>Vetro<br>%</th><th>Ferram.<br>%</th>
+                <th>Prezzo<br>unitario</th><th>Totale<br>riga</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="rows-body"></tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" id="add-row">+ Aggiungi infisso</button>
+      </div>
+
+    </div>
+
+    <div class="summary">
+      <div class="card">
+        <h2>Riepilogo</h2>
+        <div class="sum-line"><span>Subtotale imponibile</span><span id="s-subtot">0,00 €</span></div>
+        <div class="sum-line"><span>Sconto commerciale</span><span id="s-sconto">−0,00 €</span></div>
+        <div class="sum-line net"><span>Imponibile netto</span><span id="s-netto">0,00 €</span></div>
+        <div class="sum-line"><span>IVA</span><span id="s-iva">0,00 €</span></div>
+        <div class="sum-total">
+          <span class="lbl">TOTALE</span>
+          <span class="val" id="s-totale">0,00 €</span>
+        </div>
+        <div class="n-items" id="s-count">0 infissi · 0 m² totali</div>
+        <div class="actions">
+          <button class="btn-outline" id="btn-print">Stampa / PDF</button>
+          <button class="btn-outline" id="btn-csv">Esporta CSV</button>
+        </div>
+      </div>
+      <div class="foot-note">
+        Le celle del listino e i parametri generali si applicano a tutte le righe. Extra colore/vetro/ferramenta sono percentuali applicate riga per riga sul prezzo base.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const fmt = n => (isFinite(n) ? n.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2}) : '0,00') + ' €';
+
+let listino = [
+  {nome:'Finestra a battente 1 anta', prezzo:380},
+  {nome:'Finestra a battente 2 ante', prezzo:350},
+  {nome:'Portafinestra a battente',   prezzo:360},
+  {nome:'Scorrevole standard',        prezzo:420},
+  {nome:'Alzante scorrevole (HS)',    prezzo:650},
+  {nome:'Vasistas / anta a bilico',   prezzo:330},
+  {nome:'Fisso (vetrata fissa)',      prezzo:260},
+];
+
+let rows = [
+  {desc:'Cucina - finestra', tipo:listino[0].nome, larg:1200, alt:1400, qta:2, colore:8, vetro:0, ferr:0}
+];
+
+const listinoBody = document.getElementById('listino-body');
+const rowsBody = document.getElementById('rows-body');
+
+function renderListino(){
+  listinoBody.innerHTML = '';
+  listino.forEach((item, idx) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${item.nome}</td>
+      <td style="text-align:right"><input type="number" step="1" value="${item.prezzo}" data-idx="${idx}" class="listino-prezzo"></td>`;
+    listinoBody.appendChild(tr);
+  });
+  listinoBody.querySelectorAll('.listino-prezzo').forEach(inp => {
+    inp.addEventListener('input', e => {
+      listino[e.target.dataset.idx].prezzo = parseFloat(e.target.value) || 0;
+      renderRows();
+    });
+  });
+}
+
+function optionsHTML(selected){
+  return listino.map(l => `<option value="${l.nome}" ${l.nome===selected?'selected':''}>${l.nome}</option>`).join('');
+}
+
+function getParams(){
+  return {
+    mqmin: parseFloat(document.getElementById('p-mqmin').value) || 0,
+    sconto: (parseFloat(document.getElementById('p-sconto').value) || 0) / 100,
+    iva: (parseFloat(document.getElementById('p-iva').value) || 0) / 100,
+  };
+}
+
+function priceFor(nome){
+  const item = listino.find(l => l.nome === nome);
+  return item ? item.prezzo : 0;
+}
+
+function renderRows(){
+  const params = getParams();
+  rowsBody.innerHTML = '';
+  let subtot = 0, totMq = 0, totQta = 0;
+
+  rows.forEach((row, idx) => {
+    const mqCad = (row.larg/1000) * (row.alt/1000) || 0;
+    const mqFatt = Math.max(mqCad, params.mqmin);
+    const prezzoMq = priceFor(row.tipo);
+    const extraTot = (row.colore + row.vetro + row.ferr) / 100;
+    const prezzoUnit = mqFatt * prezzoMq * (1 + extraTot);
+    const totRiga = prezzoUnit * (row.qta || 0);
+    subtot += totRiga;
+    totMq += mqFatt * (row.qta||0);
+    totQta += (row.qta||0);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rownum">${idx+1}</td>
+      <td><input type="text" value="${row.desc}" data-f="desc" data-i="${idx}"></td>
+      <td><select data-f="tipo" data-i="${idx}">${optionsHTML(row.tipo)}</select></td>
+      <td><input type="number" value="${row.larg}" data-f="larg" data-i="${idx}"></td>
+      <td><input type="number" value="${row.alt}" data-f="alt" data-i="${idx}"></td>
+      <td><input type="number" value="${row.qta}" data-f="qta" data-i="${idx}"></td>
+      <td class="calc">${mqCad.toFixed(2)}</td>
+      <td class="calc">${prezzoMq.toFixed(0)}</td>
+      <td><input type="number" value="${row.colore}" data-f="colore" data-i="${idx}"></td>
+      <td><input type="number" value="${row.vetro}" data-f="vetro" data-i="${idx}"></td>
+      <td><input type="number" value="${row.ferr}" data-f="ferr" data-i="${idx}"></td>
+      <td class="money">${fmt(prezzoUnit)}</td>
+      <td class="money">${fmt(totRiga)}</td>
+      <td><button class="rm-btn" data-i="${idx}" title="Rimuovi">×</button></td>
+    `;
+    rowsBody.appendChild(tr);
+  });
+
+  rowsBody.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', e => {
+      const i = e.target.dataset.i, f = e.target.dataset.f;
+      if (['larg','alt','qta','colore','vetro','ferr'].includes(f)){
+        rows[i][f] = parseFloat(e.target.value) || 0;
+      } else {
+        rows[i][f] = e.target.value;
+      }
+      renderRows();
+    });
+  });
+  rowsBody.querySelectorAll('.rm-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      rows.splice(e.target.dataset.i, 1);
+      renderRows();
+    });
+  });
+
+  const scontoVal = subtot * params.sconto;
+  const netto = subtot - scontoVal;
+  const ivaVal = netto * params.iva;
+  const totale = netto + ivaVal;
+
+  document.getElementById('s-subtot').textContent = fmt(subtot);
+  document.getElementById('s-sconto').textContent = '−' + fmt(scontoVal);
+  document.getElementById('s-netto').textContent = fmt(netto);
+  document.getElementById('s-iva').textContent = fmt(ivaVal);
+  document.getElementById('s-totale').textContent = fmt(totale);
+  document.getElementById('s-count').textContent = `${totQta} infissi · ${totMq.toFixed(2)} m² totali`;
+}
+
+document.getElementById('add-row').addEventListener('click', () => {
+  rows.push({desc:'', tipo:listino[0].nome, larg:1000, alt:1200, qta:1, colore:0, vetro:0, ferr:0});
+  renderRows();
+});
+
+['p-mqmin','p-sconto','p-iva'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderRows);
+});
+
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+document.getElementById('btn-csv').addEventListener('click', () => {
+  const params = getParams();
+  let csv = 'Descrizione;Tipologia;Larghezza mm;Altezza mm;Quantita;mq cad;Prezzo mq;Extra colore %;Extra vetro %;Extra ferramenta %;Prezzo unitario;Totale riga\n';
+  rows.forEach(row => {
+    const mqCad = (row.larg/1000) * (row.alt/1000) || 0;
+    const mqFatt = Math.max(mqCad, params.mqmin);
+    const prezzoMq = priceFor(row.tipo);
+    const extraTot = (row.colore + row.vetro + row.ferr) / 100;
+    const prezzoUnit = mqFatt * prezzoMq * (1 + extraTot);
+    const totRiga = prezzoUnit * (row.qta || 0);
+    csv += `${row.desc};${row.tipo};${row.larg};${row.alt};${row.qta};${mqCad.toFixed(2)};${prezzoMq};${row.colore};${row.vetro};${row.ferr};${prezzoUnit.toFixed(2)};${totRiga.toFixed(2)}\n`;
+  });
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'preventivo_infissi_r40.csv';
+  link.click();
+});
+
+renderListino();
+renderRows();
+</script>
+</body>
+</html>
