@@ -150,12 +150,43 @@
 
   .foot-note{font-size:11px;color:var(--text-soft);margin-top:20px;line-height:1.5;}
 
+  /* Vista di stampa per il cliente: nascosta normalmente, mostrata solo in stampa/PDF */
+  #print-view{display:none;}
+
   @media print{
-    .add-row-btn, .actions, .rm-btn{display:none;}
-    body{background:#fff;}
-    .card{border:1px solid #999;}
-    .layout{grid-template-columns:1fr;}
+    body *{visibility:hidden;}
+    #print-view, #print-view *{visibility:visible;}
+    #print-view{
+      display:block;position:absolute;top:0;left:0;width:100%;
+      padding:0;margin:0;
+    }
+    @page{margin:16mm 14mm;}
   }
+
+  .pv-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:3px solid #22262b;padding-bottom:12px;margin-bottom:18px;
+  }
+  .pv-azienda{font-family:var(--font-head);font-size:20px;font-weight:600;color:#22262b;}
+  .pv-title{font-family:var(--font-head);font-size:26px;font-weight:700;color:#3d5a73;letter-spacing:1px;}
+  .pv-meta{
+    display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;
+    font-size:13px;color:#22262b;margin-bottom:20px;
+  }
+  table.pv-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:18px;}
+  table.pv-table th{
+    text-align:left;background:#22262b;color:#fff;padding:7px 8px;font-weight:600;font-size:11px;
+  }
+  table.pv-table td{padding:7px 8px;border-bottom:1px solid #ddd;}
+  table.pv-table td:last-child, table.pv-table th:last-child{text-align:right;}
+  table.pv-table td:nth-child(6), table.pv-table th:nth-child(6){text-align:right;}
+  .pv-totals{width:280px;margin-left:auto;font-size:13px;}
+  .pv-line{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #ccc;}
+  .pv-grand{
+    font-family:var(--font-head);font-size:18px;font-weight:700;
+    border-bottom:none;border-top:2px solid #22262b;margin-top:4px;padding-top:8px;color:#22262b;
+  }
+  .pv-footer{margin-top:30px;font-size:10.5px;color:#777;border-top:1px solid #ddd;padding-top:10px;}
 </style>
 </head>
 <body>
@@ -175,6 +206,7 @@
       <div class="card">
         <h2>Dati commessa</h2>
         <div class="client-grid">
+          <div class="field"><label>Azienda emittente</label><input type="text" id="f-azienda" placeholder="Nome della tua azienda"></div>
           <div class="field"><label>Cliente</label><input type="text" id="f-cliente" placeholder="Nome e cognome / ragione sociale"></div>
           <div class="field"><label>Cantiere / indirizzo</label><input type="text" id="f-cantiere" placeholder="Via, città"></div>
           <div class="field"><label>N. preventivo</label><input type="text" id="f-numero" placeholder="es. 2026-014"></div>
@@ -229,7 +261,7 @@
         </div>
         <div class="n-items" id="s-count">0 infissi · 0 m² totali</div>
         <div class="actions">
-          <button class="btn-outline" id="btn-print">Stampa / PDF</button>
+          <button class="btn-outline" id="btn-print-client">PDF per il cliente</button>
           <button class="btn-outline" id="btn-csv">Esporta CSV</button>
         </div>
       </div>
@@ -238,6 +270,34 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- VISTA STAMPA CLIENTE: visibile solo quando si stampa / salva in PDF -->
+<div id="print-view">
+  <div class="pv-head">
+    <div class="pv-azienda" id="pv-azienda">Azienda</div>
+    <div class="pv-title">PREVENTIVO</div>
+  </div>
+  <div class="pv-meta">
+    <div><strong>Cliente:</strong> <span id="pv-cliente"></span></div>
+    <div><strong>Cantiere:</strong> <span id="pv-cantiere"></span></div>
+    <div><strong>N. preventivo:</strong> <span id="pv-numero"></span></div>
+    <div><strong>Data:</strong> <span id="pv-data"></span></div>
+  </div>
+  <table class="pv-table">
+    <thead>
+      <tr><th>N.</th><th>Descrizione</th><th>Tipologia</th><th>Dimensioni</th><th>Q.tà</th><th>Prezzo unit.</th><th>Totale</th></tr>
+    </thead>
+    <tbody id="pv-body"></tbody>
+  </table>
+  <div class="pv-totals">
+    <div class="pv-line"><span>Subtotale imponibile</span><span id="pv-subtot"></span></div>
+    <div class="pv-line"><span>Sconto commerciale</span><span id="pv-sconto"></span></div>
+    <div class="pv-line"><span>Imponibile netto</span><span id="pv-netto"></span></div>
+    <div class="pv-line"><span>IVA</span><span id="pv-iva"></span></div>
+    <div class="pv-line pv-grand"><span>TOTALE</span><span id="pv-totale"></span></div>
+  </div>
+  <div class="pv-footer">Preventivo generato il <span id="pv-oggi"></span> — validità 30 giorni salvo diversa indicazione.</div>
 </div>
 
 <script>
@@ -369,7 +429,55 @@ document.getElementById('add-row').addEventListener('click', () => {
   document.getElementById(id).addEventListener('input', renderRows);
 });
 
-document.getElementById('btn-print').addEventListener('click', () => window.print());
+function buildPrintView(){
+  const params = getParams();
+  document.getElementById('pv-azienda').textContent = document.getElementById('f-azienda').value || 'Azienda';
+  document.getElementById('pv-cliente').textContent = document.getElementById('f-cliente').value || '—';
+  document.getElementById('pv-cantiere').textContent = document.getElementById('f-cantiere').value || '—';
+  document.getElementById('pv-numero').textContent = document.getElementById('f-numero').value || '—';
+  const dataVal = document.getElementById('f-data').value;
+  document.getElementById('pv-data').textContent = dataVal ? new Date(dataVal).toLocaleDateString('it-IT') : new Date().toLocaleDateString('it-IT');
+  document.getElementById('pv-oggi').textContent = new Date().toLocaleDateString('it-IT');
+
+  const pvBody = document.getElementById('pv-body');
+  pvBody.innerHTML = '';
+  let subtot = 0;
+  rows.forEach((row, idx) => {
+    const mqCad = (row.larg/1000) * (row.alt/1000) || 0;
+    const mqFatt = Math.max(mqCad, params.mqmin);
+    const prezzoMq = priceFor(row.tipo);
+    const extraTot = (row.colore + row.vetro + row.ferr) / 100;
+    const prezzoUnit = mqFatt * prezzoMq * (1 + extraTot);
+    const totRiga = prezzoUnit * (row.qta || 0);
+    subtot += totRiga;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${idx+1}</td>
+      <td>${row.desc || '—'}</td>
+      <td>${row.tipo}</td>
+      <td>${row.larg}×${row.alt} mm</td>
+      <td>${row.qta}</td>
+      <td>${fmt(prezzoUnit)}</td>
+      <td>${fmt(totRiga)}</td>
+    `;
+    pvBody.appendChild(tr);
+  });
+
+  const scontoVal = subtot * params.sconto;
+  const netto = subtot - scontoVal;
+  const ivaVal = netto * params.iva;
+  const totale = netto + ivaVal;
+  document.getElementById('pv-subtot').textContent = fmt(subtot);
+  document.getElementById('pv-sconto').textContent = '−' + fmt(scontoVal);
+  document.getElementById('pv-netto').textContent = fmt(netto);
+  document.getElementById('pv-iva').textContent = fmt(ivaVal);
+  document.getElementById('pv-totale').textContent = fmt(totale);
+}
+
+document.getElementById('btn-print-client').addEventListener('click', () => {
+  buildPrintView();
+  window.print();
+});
 
 document.getElementById('btn-csv').addEventListener('click', () => {
   const params = getParams();
